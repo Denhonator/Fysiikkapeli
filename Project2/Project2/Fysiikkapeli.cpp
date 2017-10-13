@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SDL_ttf.h>
 #include <string>
+#include <fstream>
 
 bool running = 1;
 int resx = 1600;
@@ -24,7 +25,7 @@ int special2 = 100;
 int direction = 2;
 bool input = 1;
 int temp = 0;
-bool changewindow = 0;
+bool changewindow = 1;
 int holding = 0;
 
 bool wall(int x, int y, int w, int h, int make)
@@ -466,6 +467,31 @@ int main(int argc, char** argv)
 	int i = 0;
 	int j = 0;
 
+	std::ifstream infile("conf.cfg");
+	std::string line;
+	if (infile.is_open()) {
+		while (infile.good()) {
+			std::getline(infile, line);
+			std::cout << line << ": ";
+			std::getline(infile, line);
+			std::cout << line << "\n";
+			resx = std::stoi(line);
+			std::getline(infile, line);
+			std::cout << line << ": ";
+			std::getline(infile, line);
+			std::cout << line << "\n";
+			resy = std::stoi(line);
+			std::getline(infile, line);
+			std::cout << line << ": ";
+			std::getline(infile, line);
+			std::cout << line << "\n";
+			windowed = std::stoi(line);
+		}
+		infile.close();
+	}
+	else
+		std::cout << "Not open!\n";
+
 	SDL_Window* window = NULL;
 	window = SDL_CreateWindow
 	(
@@ -482,13 +508,13 @@ int main(int argc, char** argv)
 	SDL_Renderer* renderer = NULL;
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	TTF_Init(); 
+	TTF_Init();
 
 	SDL_Rect Message_rect;
-	Message_rect.x = 0;  
-	Message_rect.y = 0; 
-	Message_rect.w = 200; 
-	Message_rect.h = 30; 
+	Message_rect.x = 0;
+	Message_rect.y = 0;
+	Message_rect.w = 200;
+	Message_rect.h = 30;
 
 	// Set render color to red ( background will be rendered in this color )
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
