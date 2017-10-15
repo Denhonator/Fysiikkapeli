@@ -15,7 +15,7 @@ TODO:
 ## How to play
 Go to Project2/x64/Relase or Debug to find the .exe. Only Debug folder has conf.cfg (whoops), the versions are identical atm.
 
-# Controls
+### Controls
 WASD and arrow keys to move.
 For WASD, hold Q and A, W or D to go fast but use special.
 With arrow keys, use RCTRL.
