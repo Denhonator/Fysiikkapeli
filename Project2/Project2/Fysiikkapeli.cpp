@@ -44,7 +44,6 @@ bool wall(int x, int y, int w, int h, int make)
 			}
 			if (coord[x+i][y+j]) {
 				wall = 1;
-				//std::cout << "Wall found at " << x + i << ", " << y + j << "\n";
 				if (!make) {
 					i = 0;
 					j = 0;
@@ -63,7 +62,11 @@ bool wall(int x, int y, int w, int h, int make)
 	j = 0;
 	return wall;
 }
-void render(SDL_Renderer* renderer, SDL_Window* window, SDL_Rect r, SDL_Rect r2, SDL_Rect l, SDL_Rect f, SDL_Rect &w1, SDL_Rect &w2, SDL_Rect &w3, SDL_Rect &w4, SDL_Rect &w5, SDL_Rect &w6, SDL_Rect w7, SDL_Rect w8, SDL_Rect Message_rect) {
+void render(SDL_Renderer* renderer, SDL_Window* window, 
+	SDL_Rect r, SDL_Rect r2, SDL_Rect l, SDL_Rect f,
+	SDL_Rect w1, SDL_Rect w2, SDL_Rect w3, SDL_Rect w4, SDL_Rect w5, SDL_Rect w6, SDL_Rect w7, SDL_Rect w8,
+	SDL_Rect Message_rect, int lvl) {
+	
 	TTF_Font* font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 14);
 	if (!font) {
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
@@ -149,7 +152,7 @@ void render(SDL_Renderer* renderer, SDL_Window* window, SDL_Rect r, SDL_Rect r2,
 	Message_rect.w = SDL_GetWindowSurface(window)->w;
 	Message_rect.h = (SDL_GetWindowSurface(window)->w)/50;
 	SDL_Color black = { 0, 0, 0 };
-	std::string s = std::to_string(special) + "           Q / CTRL  for  special.   Hold  up  to  boost  when  going  up,  regain  this  on  the  ground.   Bounce.            " + std::to_string(special2);
+	std::string s = std::to_string(special) + "          Level  " + std::to_string(lvl) + "           Q / CTRL  for  special.   Hold  up  to  boost  when  going  up,  regain  this  on  the  ground.   Bounce.            " + std::to_string(special2);
 	char const *pchar = s.c_str();
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, pchar, black);
 	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -158,12 +161,12 @@ void render(SDL_Renderer* renderer, SDL_Window* window, SDL_Rect r, SDL_Rect r2,
 	
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer, 250, 250, 250, 250);
+	SDL_RenderFillRect(renderer, &l);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 	SDL_RenderFillRect(renderer, &r);
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(renderer, &r2);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-	SDL_RenderFillRect(renderer, &l);
 	SDL_SetRenderDrawColor(renderer, 155, 200, 200, 100);
 	SDL_RenderFillRect(renderer, &f);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
@@ -235,9 +238,9 @@ void controls(SDL_Rect r, SDL_Rect r2, int &lvl) {
 	if (keys[SDL_SCANCODE_PAGEDOWN]&&areamultiplier < 3)
 		areamultiplier += 0.02;
 	if (keys[SDL_SCANCODE_TAB] && !holding) {
-		if (lvl == 6)
-			lvl = 1;
-		else if (lvl < 6)
+		if (lvl == 7)
+			lvl = 0;
+		else if (lvl < 7)
 			lvl++;
 		holding = 10;
 	}
@@ -295,6 +298,8 @@ void controls2(SDL_Rect r2, SDL_Rect r) {
 	}
 }
 void collision(SDL_Rect r) {
+	int strength = 1;
+	int measure = 1;
 	while (wall(r.x, r.y + r.h, r.w, speedy, 0)) {
 		speedy--;
 	}
@@ -307,8 +312,34 @@ void collision(SDL_Rect r) {
 	while (wall(r.x + r.w, r.y, speedx, r.h - 1, 0)) {
 		speedx--;
 	}
+	while (wall(r.x, r.y, r.w, r.h, 0)) {
+		if (measure == 1)
+			r.y -= strength;
+		if (measure == 2)
+			r.x += strength;
+		if (measure == 3)
+			r.x += strength;
+		if (measure == 4)
+			r.y += strength;
+		if (measure == 5)
+			r.y += strength;
+		if (measure == 6)
+			r.x -= strength;
+		if (measure == 7)
+			r.x -= strength;
+		if (measure == 8)
+			r.y -= strength;
+		if (measure == 9) {
+			measure = 1;
+			strength++;
+			r.x += strength;
+		}
+		measure++;
+	}
 }
 void collision2(SDL_Rect r2) {
+	int measure = 1;
+	int strength = 1;
 	while (wall(r2.x, r2.y + r2.h, r2.w, speedy2, 0)) {
 		speedy2--;
 	}
@@ -321,7 +352,30 @@ void collision2(SDL_Rect r2) {
 	while (wall(r2.x + r2.w, r2.y, speedx2, r2.h - 1, 0)) {
 		speedx2--;
 	}
-
+	while (wall(r2.x, r2.y, r2.w, r2.h, 0)) {
+		if (measure == 1)
+			r2.y -= strength;
+		if (measure == 2)
+			r2.x += strength;
+		if (measure == 3)
+			r2.x += strength;
+		if (measure == 4)
+			r2.y += strength;
+		if (measure == 5)
+			r2.y += strength;
+		if (measure == 6)
+			r2.x -= strength;
+		if (measure == 7)
+			r2.x -= strength;
+		if (measure == 8)
+			r2.y -= strength;
+		if (measure == 9) {
+			measure = 1;
+			strength++;
+			r2.x += strength;
+		}
+		measure++;
+	}
 }
 void acceleration(SDL_Rect r, SDL_Rect r2) {
 	if (counter > 0)
@@ -365,11 +419,15 @@ void acceleration(SDL_Rect r, SDL_Rect r2) {
 	if (counter == 0)
 		counter = 5;
 }
-void level(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect &l, SDL_Rect &f, SDL_Rect &w1, SDL_Rect &w2, SDL_Rect &w3, SDL_Rect &w4, SDL_Rect &w5, SDL_Rect &w6, SDL_Rect &w7, SDL_Rect &w8) {
+void level(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect &l, SDL_Rect &f,
+	SDL_Rect &w1, SDL_Rect &w2, SDL_Rect &w3, SDL_Rect &w4, SDL_Rect &w5, SDL_Rect &w6, SDL_Rect &w7, SDL_Rect &w8) {
 	speedx = 0;
 	speedx2 = 0;
 	speedy = 0;
 	speedy2 = 0;
+	special = 100;
+	special2 = 100;
+
 	w1.x = 0; w1.y = 0; w1.w = 0; w1.h = 0;
 	w2.x = 0; w2.y = 0; w2.w = 0; w2.h = 0;
 	w3.x = 0; w3.y = 0; w3.w = 0; w3.h = 0;
@@ -378,32 +436,57 @@ void level(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect &l, SDL_Rect &f, SDL_R
 	w6.x = 0; w6.y = 0; w6.w = 0; w6.h = 0;
 	w7.x = 0; w7.y = 0; w7.w = 0; w7.h = 0;
 	w8.x = 0; w8.y = 0; w8.w = 0; w8.h = 0;
-	l.x = 0; l.y = 0; l.w = 0; l.h = 0;
+	l.x = 55; l.y = -100; l.w = 1500; l.h = 1000;
 	f.x = 0; f.y = 0; f.w = 0; f.h = 0;
+	r.w = 50;
+	r.h = 50;
+	r2.w = 50;
+	r2.h = 50;
+
+//w2, w6-w8 are currently usable as moving platforms
+//l is used for determining play area
+
+if (level == 0) {		//pvp map
+	r.x = 200;
+	r.y = 500;
+
+	r2.x = 1100;	
+	r2.y = 500;
+
+	w1.x = 200;
+	w1.y = 560;
+	w1.w = 1150;
+	w1.h = 10;
+	wall(w1.x + 1, w1.y + 1, w1.w - 2, w1.h - 1, 1);
+
+	w6.x = 500;
+	w6.y = 400;
+	w6.w = 10;
+	w6.h = 160;
+	wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
+
+	direction = 1;
+}
 
 if (level == 1) {
 	r.x = 50;		//player 1
 	r.y = 400;
-	r.w = 50;
-	r.h = 50;
 
 	r2.x = 120;		//player 2
 	r2.y = 400;
-	r2.w = 50;
-	r2.h = 50;
 
 	f.x = 1300;		//usually using as finish
 	f.y = 630;
 	f.w = 50;
 	f.h = 50;
 
-	l.x = 900;
-	l.y = 700;
-	l.w = 505;
-	l.h = 10;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+	w2.x = 900;
+	w2.y = 700;
+	w2.w = 505;
+	w2.h = 10;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 
-	w6.x = 5;
+	w6.x = 25;
 	w6.y = 700;
 	w6.w = 300;
 	w6.h = 10;
@@ -421,7 +504,7 @@ if (level == 1) {
 	w7.h = 600;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
 
-	w8.x = 5;
+	w8.x = 25;
 	w8.y = 150;
 	w8.w = 3;
 	w8.h = 550;
@@ -431,26 +514,22 @@ if (level == 1) {
 else if (level == 2) {
 	r.x = 50;
 	r.y = 400;
-	r.w = 50;
-	r.h = 50;
 
 	r2.x = 120;
 	r2.y = 400;
-	r2.w = 50;
-	r2.h = 50;
 
 	f.x = 1300;
 	f.y = 630;
 	f.w = 50;
 	f.h = 50;
 
-	l.x = 1000;
-	l.y = 700;
-	l.w = 505;
-	l.h = 10;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+	w2.x = 1000;
+	w2.y = 700;
+	w2.w = 505;
+	w2.h = 10;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 
-	w6.x = 5;
+	w6.x = 25;
 	w6.y = 700;
 	w6.w = 300;
 	w6.h = 10;
@@ -468,7 +547,7 @@ else if (level == 2) {
 	w7.h = 600;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
 
-	w8.x = 5;
+	w8.x = 25;
 	w8.y = 150;
 	w8.w = 3;
 	w8.h = 550;
@@ -477,28 +556,24 @@ else if (level == 2) {
 else if (level == 3) {
 	r.x = 50;
 	r.y = 400;
-	r.w = 50;
-	r.h = 50;
 
 	r2.x = 120;
 	r2.y = 400;
-	r2.w = 50;
-	r2.h = 50;
 
 	f.x = 1150;
 	f.y = 430;
 	f.w = 50;
 	f.h = 50;				//These 3 are not solid
 
-	l.x = 600;
-	l.y = 500;
-	l.w = 605;
-	l.h = 10;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);		//These are solid
+	w2.x = 600;
+	w2.y = 500;
+	w2.w = 605;
+	w2.h = 10;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);		//These are solid
 
-	w6.x = 5;
+	w6.x = 25;
 	w6.y = 700;
-	w6.w = 600;
+	w6.w = 580;
 	w6.h = 10;
 	wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
 
@@ -508,7 +583,7 @@ else if (level == 3) {
 	w7.h = 200;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
 
-	w8.x = 5;
+	w8.x = 25;
 	w8.y = 150;
 	w8.w = 3;
 	w8.h = 550;
@@ -518,28 +593,24 @@ else if (level == 3) {
 else if (level == 4) {
 	r.x = 50;
 	r.y = 400;
-	r.w = 50;
-	r.h = 50;
 
 	r2.x = 120;
 	r2.y = 400;
-	r2.w = 50;
-	r2.h = 50;
 
 	f.x = 1150;
 	f.y = 430;
 	f.w = 50;
 	f.h = 50;
 
-	l.x = 600;
-	l.y = 500;
-	l.w = 605;
-	l.h = 10;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+	w2.x = 600;
+	w2.y = 500;
+	w2.w = 605;
+	w2.h = 10;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 
-	w6.x = 5;
+	w6.x = 25;
 	w6.y = 700;
-	w6.w = 600;
+	w6.w = 580;
 	w6.h = 10;
 	wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
 
@@ -549,7 +620,7 @@ else if (level == 4) {
 	w7.h = 200;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
 
-	w8.x = 5;
+	w8.x = 25;
 	w8.y = 150;
 	w8.w = 3;
 	w8.h = 550;
@@ -558,27 +629,35 @@ else if (level == 4) {
 
 else if (level == 5) {
 	r.x = 200;
-	r.y = 200;
-	r.w = 50;
-	r.h = 50;
+	r.y = 550;
 
 	r2.x = 300;
-	r2.y = 200;
-	r2.w = 50;
-	r2.h = 50;
+	r2.y = 550;
 
 	f.x = 1300;
-	f.y = 430;
+	f.y = 320;
 	f.w = 50;
 	f.h = 50;
 
-	l.x = 1100;
-	l.y = 500;
-	l.w = 270;
-	l.h = 10;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+	w2.x = 1100;
+	w2.y = 380;
+	w2.w = 270;
+	w2.h = 10;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 
-	w6.x = 5;
+	w4.x = 25;
+	w4.y = 500;
+	w4.w = 200;
+	w4.h = 10;
+	wall(w4.x + 1, w4.y + 1, w4.w - 2, w4.h - 1, 1);
+
+	w5.x = 300;
+	w5.y = 300;
+	w5.w = 400;
+	w5.h = 10;
+	wall(w5.x + 1, w5.y + 1, w5.w - 2, w5.h - 1, 1);
+
+	w6.x = 25;
 	w6.y = 700;
 	w6.w = 600;
 	w6.h = 10;
@@ -590,7 +669,7 @@ else if (level == 5) {
 	w7.h = 410;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
 
-	w8.x = 5;
+	w8.x = 25;
 	w8.y = 150;
 	w8.w = 3;
 	w8.h = 550;
@@ -598,30 +677,65 @@ else if (level == 5) {
 	}
 
 else if (level == 6) {
+	areamultiplier = 2.5;
+
+	r.x = 150;
+	r.y = 150;
+
+	r2.x = 220;
+	r2.y = 150;
+
+	f.x = 2000;
+	f.y = 150;
+	f.w = 50;
+	f.h = 50;
+
+	l.x = 55; 
+	l.y = -100; 
+	l.w = 2200; 
+	l.h = 2200;
+
+	w5.x = 20;
+	w5.y = 220;
+	w5.w = 400;
+	w5.h = 10;
+	wall(w5.x + 1, w5.y + 1, w5.w - 2, w5.h - 1, 1);
+
+	w6.x = 1800;
+	w6.y = 220;
+	w6.w = 300;
+	w6.h = 10;
+	wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
+
+	w7.x = 1230;
+	w7.y = 2000;
+	w7.w = 100;
+	w7.h = 10;
+	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
+
+	direction = 1;
+}
+else if (level == 7) {
 	r.x = 350;
 	r.y = 250;
-	r.w = 50;
-	r.h = 50;
 
 	r2.x = 475;
 	r2.y = 250;
-	r2.w = 50;
-	r2.h = 50;
 
 	f.x = 1100;
 	f.y = 630;
 	f.w = 50;
 	f.h = 50;
 
-	l.x = 275;
-	l.y = 570;
-	l.w = 400;
-	l.h = 2;
-	wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+	w2.x = 275;
+	w2.y = 550;
+	w2.w = 400;
+	w2.h = 5;
+	wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 
 	w5.x = 20;
 	w5.y = 50;
-	w5.w = 10;
+	w5.w = 12;
 	w5.h = 660;
 	wall(w5.x + 1, w5.y + 1, w5.w - 2, w5.h - 1, 1);
 
@@ -632,7 +746,7 @@ else if (level == 6) {
 	wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
 
 	w7.x = 1000;
-	w7.y = 100;
+	w7.y = 110;
 	w7.w = 5;
 	w7.h = 600;
 	wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);
@@ -640,106 +754,152 @@ else if (level == 6) {
 	w8.x = 30;
 	w8.y = 250;
 	w8.w = 10;
-	w8.h = 450;
+	w8.h = 452;
 	wall(w8.x + 1, w8.y + 1, w8.w - 2, w8.h - 1, 1);
 
 	direction = 1;
 }
 }
-int movinglevel(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect f, SDL_Rect &l, SDL_Rect &w6, SDL_Rect &w7, SDL_Rect &w8) {
-	if ((r.x + 50 > f.x && r.y - 50 < f.y + 50) || (r2.x + 50 > f.x && r2.y - 50 < f.y + 50)) {		//finish level trigger
-		if (level == 1)
-			level = 2;
-		else if (level == 2) 
-			level = 3;
-		else if (level == 3) 
-			level = 4;
-		else if (level == 4) 
-			level = 5;
-		else if (level == 5)
-			level = 6;
-		else if (level == 6 && ((r.x + 50 > f.x && r.y - 50 < f.y + 50 && wall(r.x, r.y + r.h, r.w, 2, 0)) || (r2.x + 50 > f.x && r2.y - 50 < f.y + 50 && wall(r2.x, r2.y + r2.h, r2.w, 2, 0))))
-			level = 1;
-	}
-	if (level == 4) {
+void specialrules(int rule) {
+	if (rule == 0) {		//no special
 		special = 0; special2 = 0;
 	}
-	else if (level == 6) {			//platforms
-		if (direction == 1) {			
-			if (l.x < 500) {
-				wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 2);
-				l.x += 2;
-				if (l.y - r.y > 49 && l.y - r.y < 53 && r.x + r.w>l.x && r.x < l.x + l.w) {
-					r.x += 2;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r2.x += 2;
-				}
-				if (l.y - r2.y > 49 && l.y - r2.y < 53 && r2.x + r2.w>l.x && r2.x < l.x + l.w) {
-					r2.x += 2;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r.x += 2;
-				}
+	if (rule == 1) {		//Recharging
+		if (special < 1 && special > -100) {
+			special -= 220;
+		}
+		if (special < 100) {
+			special++;
+			if (special > -120 && special < -100)
+				special = 1;
+		}
+		if (special2 < 1 && special2 > -100) {
+			special2 -= 220;
+		}
+		if (special2 < 100) {
+			special2++;
+			if (special2 > -120 && special2 < -100)
+				special2 = 1;
+		}
+	}
+	if (rule == 2) {		//No recharge
+		if (special < 0)
+			special = 0;
+		if (special2 < 0)
+			special2 = 0;
+	}
+}
+void moveplatform(SDL_Rect &p, SDL_Rect &r, SDL_Rect &r2, int dir, int speed = 2) {
+	if (dir == 1) {
+		wall(p.x + 1, p.y + 1, p.w - 2, p.h - 1, 2);
+		p.x += speed;
+		if (r.x + r.w > p.x && r.x < p.x + p.w && p.y - r.y > 49 && p.y - r.y < 53 && speedx <= speed)
+			speedx++;
+		if (r2.x + r2.w > p.x && r2.x < p.x + p.w && p.y - r2.y > 49 && p.y - r2.y < 53 && speedx2 <= speed)
+			speedx2++;
+	}
+	if (dir == -1) {
+		wall(p.x + 1, p.y + 1, p.w - 2, p.h - 1, 2);
+		p.x -= speed;
+		if (r.x + r.w > p.x && r.x < p.x + p.w && p.y - r.y > 49 && p.y - r.y < 53 && speedx >= -speed)
+			speedx--;
+		if (r2.x + r2.w > p.x && r2.x < p.x + p.w && p.y - r2.y > 49 && p.y - r2.y < 53 && speedx2 >= -speed)
+			speedx2--;
+	}
+	if (dir == 2) {
+		wall(p.x + 1, p.y + 1, p.w - 2, p.h - 1, 2);
+		p.y += speed;
+		if (p.y - r.y > 50 && p.y - r.y < 53 && r.x + r.w>p.x && r.x < p.x + p.w) {
+			r.y++;
+			if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
+				r2.y++;
+		}
+		if (p.y - r2.y > 50 && p.y - r2.y < 53 && r2.x + r2.w>p.x && r2.x < p.x + p.w) {
+			r2.y++;
+			if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
+				r.y++;
+		}
+	}
+	if (dir == -2) {
+		wall(p.x + 1, p.y + 1, p.w - 2, p.h - 1, 2);
+		p.y -= speed;
+		if (p.y - r.y < 50 && p.y - r.y > 10 && r.x + r.w>p.x && r.x < p.x + p.w) {
+			r.y--;
+			speedy++;
+			while (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51) {
+				r2.y--;
 			}
-			else
+		}
+		if (p.y - r2.y < 50 && p.y - r2.y > 10 && r2.x + r2.w>p.x && r2.x < p.x + p.w) {
+			r2.y--;
+			speedy2++;
+			while (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51) {
+				r.y--;
+			}
+		}
+	}
+}
+int movinglevel(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect f, SDL_Rect l, SDL_Rect &w2, SDL_Rect &w6, SDL_Rect &w7, SDL_Rect &w8) {
+	if ((r.x + r.w > f.x-1 && r.x < f.x + f.w+1 && r.y < f.y + f.h+1 && r.y + r.h > f.y-1) || (r2.x + r2.w > f.x-1 && r2.x < f.x + f.w+1 && r2.y < f.y + f.h+1 && r2.y + r2.h > f.y-1)) {		//touch f box to finish level
+		level++;
+	}
+	if (level == 0) {
+		specialrules(1);
+	}
+	else if (level == 1) {		//special rules
+		specialrules(1);
+	}
+	else if (level == 2) {
+		specialrules(1);
+	}
+	else if (level == 3) {
+		specialrules(1);
+	}
+	else if (level == 4) {
+		specialrules(0);
+	}
+	else if (level == 5) {
+		specialrules(2);
+	}
+	else if (level == 6) {
+		specialrules(2);
+	}
+	else if (level == 7) {
+		specialrules(1);
+	}
+	if (r.y > l.y + l.h || r.y + r.h < l.y || r.x > l.x + l.w || r.x + r.w < l.x || r2.y > l.y + l.h || r2.y + r2.h < l.y || r2.x > l.x + l.w || r2.x + r2.w < l.x) {
+		level = -1; //reset
+	}
+
+	if (level == 0) {
+		if (direction == 1 && w6.x >= 1350) {
+			direction = -1;
+		}
+		else if (direction == -1 && w6.x <= 200) {
+			direction = 1;
+		}
+		moveplatform(w6, r, r2, direction, 1);
+		wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);	//Walls that potentially need rebuilding
+		wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
+		wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
+	}
+	if (level == 7) {			//platforms
+		if (direction == 1 && w2.x >= 500) {
 				direction = 2;
 		}
-		if (direction == -1) {
-			if (l.x > 150) {
-				wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 2);
-				l.x -= 2;
-				if (l.y - r.y > 49 && l.y - r.y < 53 && r.x + r.w>l.x && r.x < l.x + l.w) {
-					r.x -= 2;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r2.x -= 2;
-				}
-				if (l.y - r2.y > 49 && l.y - r2.y < 53 && r2.x + r2.w>l.x && r2.x < l.x + l.w) {
-					r2.x -= 2;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r.x -= 2;
-				}
-			}
-			else
+		else if (direction == -1 && w2.x <= 150) {
 				direction = -2;
 		}
-		if (direction == 2) {
-			if (l.y < 630) {
-				wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 2);
-				l.y += 2;
-				while (l.y - r.y > 50 && l.y - r.y < 53 && r.x + r.w>l.x && r.x < l.x + l.w) {
-					r.y++;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r2.y++;
-				}
-				while (l.y - r2.y > 50 && l.y - r2.y < 53 && r2.x + r2.w>l.x && r2.x < l.x + l.w) {
-					r2.y++;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r.y++;
-				}
-			}
-			else
+		else if (direction == 2 && w2.y >= 630) {
 				direction = -1;
 		}
-		if (direction == -2) {
-			if (l.y > 550) {
-				wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 2);
-				l.y -= 2;
-				while (l.y - r.y < 50 && l.y - r.y > 10 && r.x + r.w>l.x && r.x < l.x + l.w) {
-					r.y--;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r2.y--;
-				}
-				while (l.y - r2.y < 50 && l.y - r2.y > 10 && r2.x + r2.w>l.x && r2.x < l.x + l.w) {
-					r2.y--;
-					if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x + speedx > -51 && r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51)
-						r.y--;
-				}
-			}
-			else
+		else if (direction == -2 && w2.y <= 550) {
 				direction = 1;
 		}
-		wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);	//Move platforms
+		moveplatform(w2, r, r2, direction);
+		wall(w7.x + 1, w7.y + 1, w7.w - 2, w7.h - 1, 1);	//Walls that potentially need rebuilding
 		wall(w6.x + 1, w6.y + 1, w6.w - 2, w6.h - 1, 1);
-		wall(l.x + 1, l.y + 1, l.w - 2, l.h - 1, 1);
+		wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 	}
 	return level;
 }
@@ -759,22 +919,33 @@ void playercollision(SDL_Rect r, SDL_Rect r2) {
 				else
 					speedx2++;
 			}
-			while (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x - speedx > -51 && r2.y - r.y < 51 && r2.y - r.y > -51) {
-				if (r.x > r2.x)
-					speedx++;
-				else
-					speedx2++;
-			}
 		}
 	if (r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51 && r2.x - r.x < 51 && r2.x - r.x > -51) {
 		temp = speedy;
-		if (speedy < 0 && speedy2>0 || speedy > 0 && speedy2 < 0 || (!wall(r.x, r.y + r.h, r.w, 5, 0) && !wall(r2.x, r2.y + r2.h, r2.w, 5, 0))) {
+		if (speedy < 0 && speedy2 > 0 || speedy > 0 && speedy2 < 0 || (r.y > r2.y && speedy < -5) || (r2.y > r.y && speedy2 < -5) || (!wall(r.x, r.y + r.h, r.w, 5, 0) && !wall(r2.x, r2.y + r2.h, r2.w, 5, 0))) {
 			speedy = speedy2;
 			speedy2 = temp;
 		}
 		else {
 			speedy = -speedy + 1;
 			speedy2 = -speedy2 + 1;
+		}
+	}
+	else if (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x - speedx > -51 && r2.y - r.y < 51 && r2.y - r.y > -51) {
+		if (!(r2.x - r.x - speedx < 51 && r2.x - r.x - speedx > -51 && r2.y - r.y < 51 && r2.y - r.y > -51))
+			speedx2 = 0;
+		else if (!(r2.x + speedx2 - r.x < 51 && r2.x + speedx2 - r.x > -51 && r2.y - r.y < 51 && r2.y - r.y > -51))
+			speedx = 0;
+		else if (!(r2.x - r.x < 50 && r2.x - r.x > -50 && r2.y - r.y < 50 && r2.y - r.y > -50)) {
+			speedx = 0; speedx2 = 0;
+		}
+		if (r.x > r2.x && (r2.x + speedx2 - r.x - speedx < 51 && r2.x + speedx2 - r.x - speedx > -51 && r2.y - r.y < 51 && r2.y - r.y > -51)) {
+			speedx++;
+			speedx2--;
+		}
+		else {
+			speedx--;
+			speedx2++;
 		}
 	}
 }
@@ -871,7 +1042,7 @@ int main(int argc, char** argv)
 	while (running)
 	{
 		if (makelevel) {
-			wall(0, 0, 1280, 720, 2);
+			wall(0, 0, 3840, 2160, 2);
 			level(lvl, r, r2, l, f, w1, w2, w3, w4, w5, w6, w7, w8);
 			makelevel = 0;
 		}
@@ -886,18 +1057,16 @@ int main(int argc, char** argv)
 				SDL_SetWindowSize(window, resx, resy);
 				changewindow = 0;
 			}
-			render(renderer, window, r, r2, l, f, w1, w2, w3, w4, w5, w6, w7, w8, Message_rect);	//render
+			render(renderer, window, r, r2, l, f, w1, w2, w3, w4, w5, w6, w7, w8, Message_rect, lvl);	//render
 			t1 = clock();
 		}
 		SDL_PollEvent(&e);			
 		if (e.type == SDL_QUIT) {		
 			break;
 		}
-		if (keys[SDL_SCANCODE_R] || r.y>1220 || r2.y>1220) {				//reset
+		if (keys[SDL_SCANCODE_R]) {				//reset
 			wall(0, 0, 3840, 2160, 2);
 			level(lvl, r, r2, l, f, w1, w2, w3, w4, w5, w6, w7, w8);
-			speedy = 0;
-			speedy2 = 0;
 		}
 		if ((t2 - t3) > (1000 / physicsfps)) {			//Game
 			t3 = clock();	
@@ -905,41 +1074,29 @@ int main(int argc, char** argv)
 			controls(r,r2,lvl);
 			controls2(r2,r);
 
-			playercollision(r, r2);
-
-			collision(r);	//collision player 1
-			collision2(r2);	//collision player 2
-			
-			r.x += speedx;
-			r.y += speedy;
-			r2.x += speedx2;
-			r2.y += speedy2;
-
-			acceleration(r,r2);	//gravity and horizontal
-
-			lvl = movinglevel(lvl, r, r2, f, l, f, w7, w8);
+			lvl = movinglevel(lvl, r, r2, f, l, w2, w6, w7, w8);
 			if (lvl != prevlvl) {
+				if (lvl == 8)
+					lvl = 0;
+				if (lvl == -1)
+					lvl = prevlvl;
 				makelevel = 1;
 				prevlvl = lvl;
 				std::cout << "Level " << lvl << "\n";
 			}
-			if (special < 1 && special > -80) {
-				special -=200;
-			}
-			if (special < 100){
-				special++;
-				if (special > -100 && special < -80)
-					special = 1;
-			}
-			if (special2 < 1 && special2 > -80) {
-				special2 -=200;
-			}
-			if (special2 < 100) {
-				special2++;
-				if (special2 > -100 && special2 < -80)
-					special2 = 1;
-			}
+			acceleration(r, r2);	//gravity and horizontal
 
+			playercollision(r, r2); 
+
+			collision(r);	//collision player 1
+			collision2(r2);	//collision player 2
+
+			r.x += speedx;
+			if (speedy < 0 || !wall(r.x, r.y + r.h - 1, r.w, 1, 0))
+				r.y += speedy;
+			r2.x += speedx2;
+			if (speedy2 < 0 || !wall(r2.x, r2.y + r2.h - 1, r2.w, 1, 0))
+				r2.y += speedy2;
 		}
 	}
 	SDL_DestroyWindow(window);
