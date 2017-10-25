@@ -175,6 +175,8 @@ void render(SDL_Renderer* renderer, SDL_Window* window,
 	Message_rect.h = (SDL_GetWindowSurface(window)->w)/50;
 	SDL_Color black = { 0, 0, 0 };
 	std::string s = std::to_string(special) + "          Level  " + std::to_string(lvl) + "           Q / CTRL  for  special.   Hold  up  to  boost  when  going  up,  regain  this  on  the  ground.   Bounce.            " + std::to_string(special2);
+	if (edit)
+		s = "EDITOR.  WASD to move, arrows to resize. TAB to change selection. CTRL+S to save, CTRL+P to play.  Selection:  " + std::to_string(selection);
 	char const *pchar = s.c_str();
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, pchar, black);
 	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -487,301 +489,142 @@ void level(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect &l, SDL_Rect &f, SDL_R
 // p1-p4 are powerups
 
 if (level == 0) {		//pvp map
-	r.x = 200;
-	r.y = 500;
-
-	r2.x = 1100;	
-	r2.y = 500;
-
-	w1.x = 200;
-	w1.y = 560;
-	w1.w = 1150;
-	w1.h = 10;
-
-	w6.x = 500;
-	w6.y = 300;
-	w6.w = 10;
-	w6.h = 260;
-
-	direction = 1;
-}
-
-if (level == 1) {
-	r.x = 50;		//player 1
-	r.y = 400;
-
-	r2.x = 120;		//player 2
-	r2.y = 400;
-
-	f.x = 1300;		//usually using as finish
-	f.y = 630;
-
-	w2.x = 900;
-	w2.y = 700;
-	w2.w = 505;
-	w2.h = 10;
-
-	w6.x = 25;
-	w6.y = 700;
-	w6.w = 300;
-	w6.h = 10;
-
-	w1.x = 500;
-	w1.y = 700;
-	w1.w = 200;
-	w1.h = 10;
-
-	w7.x = 1400;
-	w7.y = 100;
-	w7.w = 5;
-	w7.h = 600;
-
-	w8.x = 25;
-	w8.y = 150;
-	w8.w = 3;
-	w8.h = 550;
-}
-
-else if (level == 2) {
-	r.x = 50;
-	r.y = 400;
-
-	r2.x = 120;
-	r2.y = 400;
-
-	f.x = 1300;
-	f.y = 630;
-
-	w2.x = 1000;
-	w2.y = 700;
-	w2.w = 505;
-	w2.h = 10;
-
-	w6.x = 25;
-	w6.y = 700;
-	w6.w = 300;
-	w6.h = 10;
-
-	w1.x = 500;
-	w1.y = 700;
-	w1.w = 200;
-	w1.h = 10;
-
-	w7.x = 1500;
-	w7.y = 100;
-	w7.w = 5;
-	w7.h = 600;
-
-	w8.x = 25;
-	w8.y = 150;
-	w8.w = 3;
-	w8.h = 550;
-}
-else if (level == 3) {
-	r.x = 50;
-	r.y = 400;
-
-	r2.x = 120;
-	r2.y = 400;
-
-	f.x = 1150;
-	f.y = 430;
-
-	w2.x = 600;
-	w2.y = 500;
-	w2.w = 605;
-	w2.h = 10;	
-
-	w6.x = 25;
-	w6.y = 700;
-	w6.w = 580;
-	w6.h = 10;
-
-	w7.x = 600;
-	w7.y = 500;
-	w7.w = 5;
-	w7.h = 200;
-
-	w8.x = 25;
-	w8.y = 150;
-	w8.w = 3;
-	w8.h = 550;
-}
-
-else if (level == 4) {
-	r.x = 50;
-	r.y = 400;
-
-	r2.x = 120;
-	r2.y = 400;
-
-	f.x = 1150;
-	f.y = 430;
-
-	w2.x = 600;
-	w2.y = 500;
-	w2.w = 605;
-	w2.h = 10;
-
-	w6.x = 25;
-	w6.y = 700;
-	w6.w = 580;
-	w6.h = 10;
-
-	w7.x = 600;
-	w7.y = 500;
-	w7.w = 5;
-	w7.h = 200;
-
-	w8.x = 25;
-	w8.y = 150;
-	w8.w = 3;
-	w8.h = 550;
-}
-
-else if (level == 5) {
-	r.x = 200;
-	r.y = 550;
-
-	r2.x = 300;
-	r2.y = 550;
-
-	f.x = 1300;
-	f.y = 320;
-
-	w2.x = 1100;
-	w2.y = 380;
-	w2.w = 270;
-	w2.h = 10;
-
-	w4.x = 25;
-	w4.y = 500;
-	w4.w = 200;
-	w4.h = 10;
-
-	w5.x = 300;
-	w5.y = 300;
-	w5.w = 400;
-	w5.h = 10;
-
-	w6.x = 25;
-	w6.y = 700;
-	w6.w = 600;
-	w6.h = 10;
-
-	w7.x = 1370;
-	w7.y = 100;
-	w7.w = 5;
-	w7.h = 410;
-
-	w8.x = 25;
-	w8.y = 150;
-	w8.w = 3;
-	w8.h = 550;
-	}
-
-else if (level == 6) {
-	areamultiplier = 2.5;
-
-	r.x = 150;
-	r.y = 150;
-
-	r2.x = 220;
-	r2.y = 150;
-
-	f.x = 2000;
-	f.y = 150;
-
-	l.x = 55; 
-	l.y = -100; 
-	l.w = 2200; 
-	l.h = 2200;
-
-	w5.x = 20;
-	w5.y = 220;
-	w5.w = 400;
-	w5.h = 10;
-
-	w6.x = 1800;
-	w6.y = 220;
-	w6.w = 300;
-	w6.h = 10;
-
-	w7.x = 1230;
-	w7.y = 2000;
-	w7.w = 100;
-	w7.h = 10;
-
 	direction = 1;
 }
 else if (level == 7) {
-	areamultiplier = 1;
-
-	r.x = 350;
-	r.y = 250;
-
-	r2.x = 475;
-	r2.y = 250;
-
-	f.x = 1100;
-	f.y = 630;
-
-	w2.x = 275;
-	w2.y = 550;
-	w2.w = 400;
-	w2.h = 5;
-
-	w5.x = 20;
-	w5.y = 50;
-	w5.w = 12;
-	w5.h = 660;
-
-	w6.x = 30;
-	w6.y = 700;
-	w6.w = 1200;
-	w6.h = 10;
-
-	w7.x = 1000;
-	w7.y = 110;
-	w7.w = 5;
-	w7.h = 600;
-
-	w8.x = 30;
-	w8.y = 250;
-	w8.w = 10;
-	w8.h = 452;
-
 	direction = 1;
 }
-else if (level == 8) {
-	areamultiplier = 1.25;
 
-	r.x = 50;
-	r.y = 1000;
-	r2.x = 110;
-	r2.y = 1000;
-
-	f.x = 1100;
-	f.y = 240;
-
-	p1.x = 450;
-	p1.y = 700;
-
-	w1.x = 10;
-	w1.y = 1060;
-	w1.w = 300;
-	w1.h = 10;
-
-	w2.x = 5;
-	w2.y = 0;
-	w2.w = 5;
-	w2.h = 1065;
-
-	w3.x = 1000;
-	w3.y = 300;
-	w3.w = 300;
-	w3.h = 10;
+std::ifstream infile("maps/map" + std::to_string(level));
+std::string line;
+int loop = 0;
+if (infile.is_open()) {
+	while (infile.good()) {
+		std::getline(infile, line, '=');
+		std::getline(infile, line);
+		if(loop==0)
+			r.x = std::stoi(line);
+		if (loop == 1)
+			r.y = std::stoi(line);
+		if (loop == 2)
+			r2.x = std::stoi(line);
+		if (loop == 3)
+			r2.y = std::stoi(line);
+		if (loop == 4)
+			f.x = std::stoi(line);
+		if (loop == 5)
+			f.y = std::stoi(line);
+		if (loop == 6)
+			l.x = std::stoi(line);
+		if (loop == 7)
+			l.y = std::stoi(line);
+		if (loop == 8)
+			l.w = std::stoi(line);
+		if (loop == 9)
+			l.h = std::stoi(line);
+		if (loop == 10)
+			p1.x = std::stoi(line);
+		if (loop == 11)
+			p1.y = std::stoi(line);
+		if (loop == 12)
+			p1.w = std::stoi(line);
+		if (loop == 13)
+			p1.h = std::stoi(line);
+		if (loop == 14)
+			p2.x = std::stoi(line);
+		if (loop == 15)
+			p2.y = std::stoi(line);
+		if (loop == 16)
+			p2.w = std::stoi(line);
+		if (loop == 17)
+			p2.h = std::stoi(line);
+		if (loop == 18)
+			p3.x = std::stoi(line);
+		if (loop == 19)
+			p3.y = std::stoi(line);
+		if (loop == 20)
+			p3.w = std::stoi(line);
+		if (loop == 21)
+			p3.h = std::stoi(line);
+		if (loop == 22)
+			p4.x = std::stoi(line);
+		if (loop == 23)
+			p4.y = std::stoi(line);
+		if (loop == 24)
+			p4.w = std::stoi(line);
+		if (loop == 25)
+			p4.h = std::stoi(line);
+		if (loop == 26)
+			w1.x = std::stoi(line);
+		if (loop == 27)
+			w1.y = std::stoi(line);
+		if (loop == 28)
+			w1.w = std::stoi(line);
+		if (loop == 29)
+			w1.h = std::stoi(line);
+		if (loop == 30)
+			w2.x = std::stoi(line);
+		if (loop == 31)
+			w2.y = std::stoi(line);
+		if (loop == 32)
+			w2.w = std::stoi(line);
+		if (loop == 33)
+			w2.h = std::stoi(line);
+		if (loop == 34)
+			w3.x = std::stoi(line);
+		if (loop == 35)
+			w3.y = std::stoi(line);
+		if (loop == 36)
+			w3.w = std::stoi(line);
+		if (loop == 37)
+			w3.h = std::stoi(line);
+		if (loop == 38)
+			w4.x = std::stoi(line);
+		if (loop == 39)
+			w4.y = std::stoi(line);
+		if (loop == 40)
+			w4.w = std::stoi(line);
+		if (loop == 41)
+			w4.h = std::stoi(line);
+		if (loop == 42)
+			w5.x = std::stoi(line);
+		if (loop == 43)
+			w5.y = std::stoi(line);
+		if (loop == 44)
+			w5.w = std::stoi(line);
+		if (loop == 45)
+			w5.h = std::stoi(line);
+		if (loop == 46)
+			w6.x = std::stoi(line);
+		if (loop == 47)
+			w6.y = std::stoi(line);
+		if (loop == 48)
+			w6.w = std::stoi(line);
+		if (loop == 49)
+			w6.h = std::stoi(line);
+		if (loop == 50)
+			w7.x = std::stoi(line);
+		if (loop == 51)
+			w7.y = std::stoi(line);
+		if (loop == 52)
+			w7.w = std::stoi(line);
+		if (loop == 53)
+			w7.h = std::stoi(line);
+		if (loop == 54)
+			w8.x = std::stoi(line);
+		if (loop == 55)
+			w8.y = std::stoi(line);
+		if (loop == 56)
+			w8.w = std::stoi(line);
+		if (loop == 57)
+			w8.h = std::stoi(line);
+		if (loop == 58)
+			areamultiplier = std::stof(line);
+		loop++;
+	}
+	infile.close();
 }
+
 wall(w1.x + 1, w1.y + 1, w1.w - 2, w1.h - 1, 1);
 wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 wall(w3.x + 1, w3.y + 1, w3.w - 2, w3.h - 1, 1);
@@ -953,6 +796,8 @@ void save(SDL_Rect r, SDL_Rect r2, SDL_Rect f, SDL_Rect l,
 		map << "w8.w = " + std::to_string(w8.w) + "\n";
 		map << "w8.h = " + std::to_string(w8.h) + "\n\n";
 
+		map << "Zoom out = " + std::to_string(areamultiplier) + "\n";
+
 		map.close();
 		std::cout << "Saved map to " << "maps/map" + std::to_string(t1) << "\n";
 	}
@@ -971,6 +816,30 @@ int movinglevel(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect f, SDL_Rect l,
 		boost = 1;
 	}
 	if ((r2.x + r2.w > p1.x - 1 && r2.x < p1.x + p1.w + 1 && r2.y < p1.y + p1.h + 1 && r2.y + r2.h > p1.y - 1)) {
+		special2 = 100;
+		boost2 = 1;
+	}
+	if ((r.x + r.w > p2.x - 1 && r.x < p2.x + p2.w + 1 && r.y < p2.y + p2.h + 1 && r.y + r.h > p2.y - 1)) { //powerups
+		special = 100;
+		boost = 1;
+	}
+	if ((r2.x + r2.w > p2.x - 1 && r2.x < p2.x + p2.w + 1 && r2.y < p2.y + p2.h + 1 && r2.y + r2.h > p2.y - 1)) {
+		special2 = 100;
+		boost2 = 1;
+	}
+	if ((r.x + r.w > p3.x - 1 && r.x < p3.x + p3.w + 1 && r.y < p3.y + p3.h + 1 && r.y + r.h > p3.y - 1)) { //powerups
+		special = 100;
+		boost = 1;
+	}
+	if ((r2.x + r2.w > p3.x - 1 && r2.x < p3.x + p3.w + 1 && r2.y < p3.y + p3.h + 1 && r2.y + r2.h > p3.y - 1)) {
+		special2 = 100;
+		boost2 = 1;
+	}
+	if ((r.x + r.w > p4.x - 1 && r.x < p4.x + p4.w + 1 && r.y < p4.y + p4.h + 1 && r.y + r.h > p4.y - 1)) { //powerups
+		special = 100;
+		boost = 1;
+	}
+	if ((r2.x + r2.w > p4.x - 1 && r2.x < p4.x + p4.w + 1 && r2.y < p4.y + p4.h + 1 && r2.y + r2.h > p4.y - 1)) {
 		special2 = 100;
 		boost2 = 1;
 	}

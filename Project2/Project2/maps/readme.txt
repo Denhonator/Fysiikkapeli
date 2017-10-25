@@ -1,0 +1,1 @@
+You can access the in-game editor via CTRL+E, edit a map, save a map and rename it "map9" or whatever the next number would be, to access it in-game.
