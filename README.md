@@ -15,7 +15,7 @@ TODO:
 * ~~Make a bigger level~~
 * Work on special system: Collect temporary power-ups? Make special finite? 
   * 3 different rules for special in maps: No special, recharging special, no recharging
-  * 4 power-ups, only one of them does anything, which is refill special
+  * 4 power-ups, currently all of them simply refill your special and boost
   * Special can be used to boost higher while in air going up
 * Add special interactions to levels (perhaps something that flings you at high speed?)
 
