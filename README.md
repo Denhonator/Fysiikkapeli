@@ -5,8 +5,8 @@ TODO:
   * ~~Nevermind, found bugs, should be better again~~
   * Fixed again?
 * Add levels
-  * Total 7+1 levels now. Want to have more like 30 before I'd call this something
-  * There's a level editor now. Press CTRL+E to access, WASD to move things around, arrows to resize, tab to switch between objects, CTRL+S to save to a file (no way to load from file yet) and CTRL+P to resume game
+  * Total 8+1 levels now. Want to have more like 30 before I'd call this something
+  * There's a level editor now. Press CTRL+E to access, WASD to move things around, arrows to resize, tab to switch between objects, CTRL+S to save to a file and CTRL+P to resume game. Moving platforms are still hard coded.
 * Menu
 * Rebind keys
 * ~~Improve player - moving platform interaction~~
@@ -22,7 +22,7 @@ TODO:
 ## How to play
 Uploading significant versions to Google drive
 
-https://drive.google.com/open?id=0B0f_ffA02XfXSEJSVmY2ZHlyMXc 25.10.2017
+https://drive.google.com/open?id=0B0f_ffA02XfXY3VpT0RQT00tSXc 25.10.2017
 
 ### Controls
 WASD and arrow keys to move.  
@@ -31,4 +31,4 @@ With arrow keys, use RCTRL.
 Hold up to boost yourself when going up. Recharge this by landing on ground.  
 Bounce.  
 Also, PGUP and PGDOWN to zoom, TAB to switch level.  
-CTRL+E to access level editor, WASD to move things around, arrows to resize, tab to switch between objects, CTRL+S to save to a file (no way to load from file yet) and CTRL+P to resume game
+CTRL+E to access level editor, WASD to move things around, arrows to resize, tab to switch between objects, CTRL+S to save to a file and CTRL+P to resume game
