@@ -15,14 +15,14 @@ TODO:
 * ~~Make a bigger level~~
 * Work on special system: Collect temporary power-ups? Make special finite? 
   * 3 different rules for special in maps: No special, recharging special, no recharging
-  * 4 power-ups, currently all of them simply refill your special and boost
+  * 4 power-ups, currently all of them simply refill your special and boost. Gonna implement resizing powerups.
   * Special can be used to boost higher while in air going up
 * Add special interactions to levels (perhaps something that flings you at high speed?)
 
 ## How to play
-Uploading significant versions to Google drive
+Uploading significant versions to Google drive. Download the folder by clicking "Fysiikkapeli" above, or select files to download (don't forget the maps folder).
 
-https://drive.google.com/open?id=0B0f_ffA02XfXY3VpT0RQT00tSXc 25.10.2017
+https://drive.google.com/open?id=0B0f_ffA02XfXeU1qMTdIWWkyN3M 28.10.2017
 
 ### Controls
 WASD and arrow keys to move.  
