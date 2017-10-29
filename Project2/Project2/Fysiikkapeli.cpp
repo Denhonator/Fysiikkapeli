@@ -28,6 +28,7 @@ int holding = 0;		//to avoid counting a keypress multiple times
 int counter = 0;		//to slow some things down
 bool edit = 0;		//enable editor
 int selection = 0;
+int specialrule = 0;
 
 bool wall(int x, int y, int w, int h, int make)
 {
@@ -620,11 +621,12 @@ if (infile.is_open()) {
 			w8.h = std::stoi(line);
 		if (loop == 58)
 			areamultiplier = std::stof(line);
+		if (loop == 59)
+			specialrule = std::stof(line);
 		loop++;
 	}
 	infile.close();
 }
-
 wall(w1.x + 1, w1.y + 1, w1.w - 2, w1.h - 1, 1);
 wall(w2.x + 1, w2.y + 1, w2.w - 2, w2.h - 1, 1);
 wall(w3.x + 1, w3.y + 1, w3.w - 2, w3.h - 1, 1);
@@ -714,13 +716,13 @@ void moveplatform(SDL_Rect &p, SDL_Rect &r, SDL_Rect &r2, int dir, int speed = 2
 	}
 	wall(p.x + 1, p.y + 1, p.w - 2, p.h - 1, 1);
 }
-void save(SDL_Rect r, SDL_Rect r2, SDL_Rect f, SDL_Rect l,
+void save(int level, SDL_Rect r, SDL_Rect r2, SDL_Rect f, SDL_Rect l,
 	SDL_Rect p1, SDL_Rect p2, SDL_Rect p3, SDL_Rect p4, SDL_Rect w1, SDL_Rect w2, SDL_Rect w3,
 	SDL_Rect w4, SDL_Rect w5, SDL_Rect w6, SDL_Rect w7, SDL_Rect w8) {
 	clock_t t1;
 	t1 = clock();
 	std::ofstream map;									//save map
-	map.open("maps/map" + std::to_string(t1));
+	map.open("maps/map" + std::to_string(level));
 
 	if (map.is_open()) {
 		map << "r.x = " + std::to_string(r.x) + "\n";
@@ -797,9 +799,10 @@ void save(SDL_Rect r, SDL_Rect r2, SDL_Rect f, SDL_Rect l,
 		map << "w8.h = " + std::to_string(w8.h) + "\n\n";
 
 		map << "Zoom out = " + std::to_string(areamultiplier) + "\n";
+		map << "specialrule = " + std::to_string(specialrule) + "\n";
 
 		map.close();
-		std::cout << "Saved map to " << "maps/map" + std::to_string(t1) << "\n";
+		std::cout << "Saved map to " << "maps/map" + std::to_string(level) << "\n";
 	}
 	else {
 		std::cout << "Saving failed! \n";
@@ -843,33 +846,7 @@ int movinglevel(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect f, SDL_Rect l,
 		special2 = 100;
 		boost2 = 1;
 	}
-	if (level == 0) {
-		specialrules(1);
-	}
-	else if (level == 1) {		//special rules
-		specialrules(1);
-	}
-	else if (level == 2) {
-		specialrules(1);
-	}
-	else if (level == 3) {
-		specialrules(1);
-	}
-	else if (level == 4) {
-		specialrules(0);
-	}
-	else if (level == 5) {
-		specialrules(2);
-	}
-	else if (level == 6) {
-		specialrules(2);
-	}
-	else if (level == 7) {
-		specialrules(1);
-	}
-	else if (level == 8) {
-		specialrules(2);
-	}
+	specialrules(specialrule);
 	if (r.y > l.y + l.h || r.y + r.h < l.y || r.x > l.x + l.w || r.x + r.w < l.x) {
 		r.x = 10;
 		r.y = l.y - 100;
@@ -946,7 +923,7 @@ void playercollision(SDL_Rect r, SDL_Rect r2) {
 				}
 			}
 		}
-	if (r2.y + speedy2 - r.y - speedy < 51 && r2.y + speedy2 - r.y - speedy > -51 && r2.x - r.x < 51 && r2.x - r.x > -51) {
+	if (r2.y+r2.h + speedy2 - r.y - r.h - speedy < 51 && r2.y+r2.h + speedy2 - r.y - r.h - speedy > -51 && r2.x - r.x < 51 && r2.x - r.x > -51) {
 		temp = speedy;
 		if (speedy < 0 && speedy2 > 0 || speedy > 0 && speedy2 < 0 || (r.y > r2.y && speedy < -5) || (r2.y > r.y && speedy2 < -5) || (!wall(r.x, r.y + r.h, r.w, 5, 0) && !wall(r2.x, r2.y + r2.h, r2.w, 5, 0))) {
 			speedy = speedy2;
@@ -1003,9 +980,10 @@ void conf(int mode = 0) {
 			std::cout << "conf.cfg not found!\n";
 	}
 }
-void editor(SDL_Rect &r, SDL_Rect &r2, SDL_Rect &f, SDL_Rect &l,
+void editor(int level, SDL_Rect &r, SDL_Rect &r2, SDL_Rect &f, SDL_Rect &l,
 	SDL_Rect &p1, SDL_Rect &p2, SDL_Rect &p3, SDL_Rect &p4, SDL_Rect &w1, SDL_Rect &w2, SDL_Rect &w3,
 	SDL_Rect &w4, SDL_Rect &w5, SDL_Rect &w6, SDL_Rect &w7, SDL_Rect &w8) {
+	int speed = 2;
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	SDL_Event e;
 	SDL_PollEvent(&e);
@@ -1020,409 +998,409 @@ void editor(SDL_Rect &r, SDL_Rect &r2, SDL_Rect &f, SDL_Rect &l,
 	}
 	if (keys[SDL_SCANCODE_W]) {
 		if (selection == 0) {
-			r.y--;
+			r.y-=speed;
 		}
 		if (selection == 1) {
-			r2.y--;
+			r2.y-=speed;
 		}
 		if (selection == 2) {
-			f.y--;
+			f.y-=speed;
 		}
 		if (selection == 3) {
-			l.y--;
+			l.y-=speed;
 		}
 		if (selection == 4) {
-			p1.y--;
+			p1.y-=speed;
 		}
 		if (selection == 5) {
-			p2.y--;
+			p2.y-=speed;
 		}
 		if (selection == 6) {
-			p3.y--;
+			p3.y-=speed;
 		}
 		if (selection == 7) {
-			p4.y--;
+			p4.y-=speed;
 		}
 		if (selection == 8) {
-			w1.y--;
+			w1.y-=speed;
 		}
 		if (selection == 9) {
-			w2.y--;
+			w2.y-=speed;
 		}
 		if (selection == 10) {
-			w3.y--;
+			w3.y-=speed;
 		}
 		if (selection == 11) {
-			w4.y--;
+			w4.y-=speed;
 		}
 		if (selection == 12) {
-			w5.y--;
+			w5.y-=speed;
 		}
 		if (selection == 13) {
-			w6.y--;
+			w6.y-=speed;
 		}
 		if (selection == 14) {
-			w7.y--;
+			w7.y-=speed;
 		}
 		if (selection == 15) {
-			w8.y--;
+			w8.y-=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_A]) {
 		if (selection == 0) {
-			r.x--;
+			r.x-=speed;
 		}
 		if (selection == 1) {
-			r2.x--;
+			r2.x-=speed;
 		}
 		if (selection == 2) {
-			f.x--;
+			f.x-=speed;
 		}
 		if (selection == 3) {
-			l.x--;
+			l.x-=speed;
 		}
 		if (selection == 4) {
-			p1.x--;
+			p1.x-=speed;
 		}
 		if (selection == 5) {
-			p2.x--;
+			p2.x-=speed;
 		}
 		if (selection == 6) {
-			p3.x--;
+			p3.x-=speed;
 		}
 		if (selection == 7) {
-			p4.x--;
+			p4.x-=speed;
 		}
 		if (selection == 8) {
-			w1.x--;
+			w1.x-=speed;
 		}
 		if (selection == 9) {
-			w2.x--;
+			w2.x-=speed;
 		}
 		if (selection == 10) {
-			w3.x--;
+			w3.x-=speed;
 		}
 		if (selection == 11) {
-			w4.x--;
+			w4.x-=speed;
 		}
 		if (selection == 12) {
-			w5.x--;
+			w5.x-=speed;
 		}
 		if (selection == 13) {
-			w6.x--;
+			w6.x-=speed;
 		}
 		if (selection == 14) {
-			w7.x--;
+			w7.x-=speed;
 		}
 		if (selection == 15) {
-			w8.x--;
+			w8.x-=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_LCTRL]) {
 		if (selection == 0) {
-			r.y++;
+			r.y+=speed;
 		}
 		if (selection == 1) {
-			r2.y++;
+			r2.y+=speed;
 		}
 		if (selection == 2) {
-			f.y++;
+			f.y+=speed;
 		}
 		if (selection == 3) {
-			l.y++;
+			l.y+=speed;
 		}
 		if (selection == 4) {
-			p1.y++;
+			p1.y+=speed;
 		}
 		if (selection == 5) {
-			p2.y++;
+			p2.y+=speed;
 		}
 		if (selection == 6) {
-			p3.y++;
+			p3.y+=speed;
 		}
 		if (selection == 7) {
-			p4.y++;
+			p4.y+=speed;
 		}
 		if (selection == 8) {
-			w1.y++;
+			w1.y+=speed;
 		}
 		if (selection == 9) {
-			w2.y++;
+			w2.y+=speed;
 		}
 		if (selection == 10) {
-			w3.y++;
+			w3.y+=speed;
 		}
 		if (selection == 11) {
-			w4.y++;
+			w4.y+=speed;
 		}
 		if (selection == 12) {
-			w5.y++;
+			w5.y+=speed;
 		}
 		if (selection == 13) {
-			w6.y++;
+			w6.y+=speed;
 		}
 		if (selection == 14) {
-			w7.y++;
+			w7.y+=speed;
 		}
 		if (selection == 15) {
-			w8.y++;
+			w8.y+=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_D]) {
 		if (selection == 0) {
-			r.x++;
+			r.x+=speed;
 		}
 		if (selection == 1) {
-			r2.x++;
+			r2.x+=speed;
 		}
 		if (selection == 2) {
-			f.x++;
+			f.x+=speed;
 		}
 		if (selection == 3) {
-			l.x++;
+			l.x+=speed;
 		}
 		if (selection == 4) {
-			p1.x++;
+			p1.x+=speed;
 		}
 		if (selection == 5) {
-			p2.x++;
+			p2.x+=speed;
 		}
 		if (selection == 6) {
-			p3.x++;
+			p3.x+=speed;
 		}
 		if (selection == 7) {
-			p4.x++;
+			p4.x+=speed;
 		}
 		if (selection == 8) {
-			w1.x++;
+			w1.x+=speed;
 		}
 		if (selection == 9) {
-			w2.x++;
+			w2.x+=speed;
 		}
 		if (selection == 10) {
-			w3.x++;
+			w3.x+=speed;
 		}
 		if (selection == 11) {
-			w4.x++;
+			w4.x+=speed;
 		}
 		if (selection == 12) {
-			w5.x++;
+			w5.x+=speed;
 		}
 		if (selection == 13) {
-			w6.x++;
+			w6.x+=speed;
 		}
 		if (selection == 14) {
-			w7.x++;
+			w7.x+=speed;
 		}
 		if (selection == 15) {
-			w8.x++;
+			w8.x+=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_UP]) {
 		if (selection == 0) {
-			r.h--;
+			r.h-=speed;
 		}
 		if (selection == 1) {
-			r2.h--;
+			r2.h-=speed;
 		}
 		if (selection == 2) {
-			f.h--;
+			f.h-=speed;
 		}
 		if (selection == 3) {
-			l.h--;
+			l.h-=speed;
 		}
 		if (selection == 4) {
-			p1.h--;
+			p1.h-=speed;
 		}
 		if (selection == 5) {
-			p2.h--;
+			p2.h-=speed;
 		}
 		if (selection == 6) {
-			p3.h--;
+			p3.h-=speed;
 		}
 		if (selection == 7) {
-			p4.h--;
+			p4.h-=speed;
 		}
 		if (selection == 8) {
-			w1.h--;
+			w1.h-=speed;
 		}
 		if (selection == 9) {
-			w2.h--;
+			w2.h-=speed;
 		}
 		if (selection == 10) {
-			w3.h--;
+			w3.h-=speed;
 		}
 		if (selection == 11) {
-			w4.h--;
+			w4.h-=speed;
 		}
 		if (selection == 12) {
-			w5.h--;
+			w5.h-=speed;
 		}
 		if (selection == 13) {
-			w6.h--;
+			w6.h-=speed;
 		}
 		if (selection == 14) {
-			w7.h--;
+			w7.h-=speed;
 		}
 		if (selection == 15) {
-			w8.h--;
+			w8.h-=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_LEFT]) {
 		if (selection == 0) {
-			r.w--;
+			r.w-=speed;
 		}
 		if (selection == 1) {
-			r2.w--;
+			r2.w-=speed;
 		}
 		if (selection == 2) {
-			f.w--;
+			f.w-=speed;
 		}
 		if (selection == 3) {
-			l.w--;
+			l.w-=speed;
 		}
 		if (selection == 4) {
-			p1.w--;
+			p1.w-=speed;
 		}
 		if (selection == 5) {
-			p2.w--;
+			p2.w-=speed;
 		}
 		if (selection == 6) {
-			p3.w--;
+			p3.w-=speed;
 		}
 		if (selection == 7) {
-			p4.w--;
+			p4.w-=speed;
 		}
 		if (selection == 8) {
-			w1.w--;
+			w1.w-=speed;
 		}
 		if (selection == 9) {
-			w2.w--;
+			w2.w-=speed;
 		}
 		if (selection == 10) {
-			w3.w--;
+			w3.w-=speed;
 		}
 		if (selection == 11) {
-			w4.w--;
+			w4.w-=speed;
 		}
 		if (selection == 12) {
-			w5.w--;
+			w5.w-=speed;
 		}
 		if (selection == 13) {
-			w6.w--;
+			w6.w-=speed;
 		}
 		if (selection == 14) {
-			w7.w--;
+			w7.w-=speed;
 		}
 		if (selection == 15) {
-			w8.w--;
+			w8.w-=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_DOWN]) {
 		if (selection == 0) {
-			r.h++;
+			r.h+=speed;
 		}
 		if (selection == 1) {
-			r2.h++;
+			r2.h+=speed;
 		}
 		if (selection == 2) {
-			f.h++;
+			f.h+=speed;
 		}
 		if (selection == 3) {
-			l.h++;
+			l.h+=speed;
 		}
 		if (selection == 4) {
-			p1.h++;
+			p1.h+=speed;
 		}
 		if (selection == 5) {
-			p2.h++;
+			p2.h+=speed;
 		}
 		if (selection == 6) {
-			p3.h++;
+			p3.h+=speed;
 		}
 		if (selection == 7) {
-			p4.h++;
+			p4.h+=speed;
 		}
 		if (selection == 8) {
-			w1.h++;
+			w1.h+=speed;
 		}
 		if (selection == 9) {
-			w2.h++;
+			w2.h+=speed;
 		}
 		if (selection == 10) {
-			w3.h++;
+			w3.h+=speed;
 		}
 		if (selection == 11) {
-			w4.h++;
+			w4.h+=speed;
 		}
 		if (selection == 12) {
-			w5.h++;
+			w5.h+=speed;
 		}
 		if (selection == 13) {
-			w6.h++;
+			w6.h+=speed;
 		}
 		if (selection == 14) {
-			w7.h++;
+			w7.h+=speed;
 		}
 		if (selection == 15) {
-			w8.h++;
+			w8.h+=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_RIGHT]) {
 		if (selection == 0) {
-			r.w++;
+			r.w+=speed;
 		}
 		if (selection == 1) {
-			r2.w++;
+			r2.w+=speed;
 		}
 		if (selection == 2) {
-			f.w++;
+			f.w+=speed;
 		}
 		if (selection == 3) {
-			l.w++;
+			l.w+=speed;
 		}
 		if (selection == 4) {
-			p1.w++;
+			p1.w+=speed;
 		}
 		if (selection == 5) {
-			p2.w++;
+			p2.w+=speed;
 		}
 		if (selection == 6) {
-			p3.w++;
+			p3.w+=speed;
 		}
 		if (selection == 7) {
-			p4.w++;
+			p4.w+=speed;
 		}
 		if (selection == 8) {
-			w1.w++;
+			w1.w+=speed;
 		}
 		if (selection == 9) {
-			w2.w++;
+			w2.w+=speed;
 		}
 		if (selection == 10) {
-			w3.w++;
+			w3.w+=speed;
 		}
 		if (selection == 11) {
-			w4.w++;
+			w4.w+=speed;
 		}
 		if (selection == 12) {
-			w5.w++;
+			w5.w+=speed;
 		}
 		if (selection == 13) {
-			w6.w++;
+			w6.w+=speed;
 		}
 		if (selection == 14) {
-			w7.w++;
+			w7.w+=speed;
 		}
 		if (selection == 15) {
-			w8.w++;
+			w8.w+=speed;
 		}
 	}
 	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_P]) {
 		edit = 0;
 	}
 	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_S] && !holding) {
-		save(r, r2, f, l, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
+		save(level, r, r2, f, l, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
 		holding = 20;
 	}
 	if (keys[SDL_SCANCODE_ESCAPE])
@@ -1499,6 +1477,8 @@ int main(int argc, char** argv)
 			wall(0, 0, 3840, 2160, 2);
 			level(lvl, r, r2, l, f, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
 			makelevel = 0;
+			if (f.x == 0 && f.y == 0)
+				lvl = 0;
 		}
 		t2 = clock();
 		if ((t2 - t1) > (1000 / fps)) {
@@ -1524,20 +1504,17 @@ int main(int argc, char** argv)
 		}
 		if ((t2 - t3) > (1000 / physicsfps) && !edit) {			//Game
 			t3 = clock();	
-
 			controls(r,r2,lvl);
 			controls2(r2,r);
-
 			lvl = movinglevel(lvl, r, r2, f, l, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
-			if (f.x == 0 && f.y == 0)
-				lvl = 0;
 			if (lvl != prevlvl) {
-				if (lvl == -1)
+				if (lvl == -1)		//reset
 					lvl = prevlvl;
 				makelevel = 1;
 				prevlvl = lvl;
 				std::cout << "Level " << lvl << "\n";
 			}
+
 			acceleration(r, r2);	//gravity and horizontal
 
 			playercollision(r, r2); 
@@ -1554,7 +1531,7 @@ int main(int argc, char** argv)
 		}
 		else if (edit && t2-t3 > (500 / physicsfps)) {
 			t3 = clock();
-			editor(r, r2, f, l, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
+			editor(lvl, r, r2, f, l, p1, p2, p3, p4, w1, w2, w3, w4, w5, w6, w7, w8);
 		}
 	}
 	SDL_DestroyWindow(window);
